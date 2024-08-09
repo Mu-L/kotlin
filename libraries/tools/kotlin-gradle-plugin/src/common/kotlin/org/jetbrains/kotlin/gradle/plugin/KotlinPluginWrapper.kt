@@ -145,10 +145,6 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
 
     private fun Project.registerDefaultVariantImplementations() {
         val factories = VariantImplementationFactoriesConfigurator.get(project.gradle)
-        factories.putIfAbsent(
-            MavenPluginConfigurator.MavenPluginConfiguratorVariantFactory::class,
-            MavenPluginConfigurator.DefaultMavenPluginConfiguratorVariantFactory()
-        )
 
         factories.putIfAbsent(
             JavaSourceSetsAccessor.JavaSourceSetsAccessorVariantFactory::class,
@@ -203,11 +199,6 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
         factories.putIfAbsent(
             ConfigurationCacheStartParameterAccessor.Factory::class,
             DefaultConfigurationCacheStartParameterAccessorVariantFactory()
-        )
-
-        factories.putIfAbsent(
-            SourceSetCompatibilityHelper.SourceSetCompatibilityHelperVariantFactory::class,
-            DefaultSourceSetCompatibilityHelperVariantFactory()
         )
 
         factories.putIfAbsent(
