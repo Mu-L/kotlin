@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.diagnostics
 
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.DiagnosticCheckerFilter
 import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.llFirModuleData
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.FirSession
@@ -35,11 +36,11 @@ import org.jetbrains.kotlin.platform.konan.isNative
 
 internal abstract class AbstractLLFirDiagnosticsCollector(
     session: FirSession,
-    useExtendedCheckers: Boolean,
+    filter: DiagnosticCheckerFilter,
 ) : AbstractDiagnosticCollector(
     session,
     createComponents = { reporter ->
-        CheckersFactory.createComponents(session, reporter, useExtendedCheckers)
+        CheckersFactory.createComponents(session, reporter, filter)
     }
 )
 
@@ -48,17 +49,17 @@ private object CheckersFactory {
     fun createComponents(
         session: FirSession,
         reporter: DiagnosticReporter,
-        useExtendedCheckers: Boolean
+        filter: DiagnosticCheckerFilter,
     ): DiagnosticCollectorComponents {
         val module = session.llFirModuleData.ktModule
         val platform = module.targetPlatform
         val extensionCheckers = session.extensionService.additionalCheckers
-        val declarationCheckers = createDeclarationCheckers(useExtendedCheckers, platform, extensionCheckers)
-        val expressionCheckers = createExpressionCheckers(useExtendedCheckers, platform, extensionCheckers)
-        val typeCheckers = createTypeCheckers(useExtendedCheckers, platform, extensionCheckers)
+        val declarationCheckers = createDeclarationCheckers(filter, platform, extensionCheckers)
+        val expressionCheckers = createExpressionCheckers(filter, platform, extensionCheckers)
+        val typeCheckers = createTypeCheckers(filter, platform, extensionCheckers)
 
         val regularComponents = buildList {
-            if (!useExtendedCheckers) {
+            if (!filter.runExtraCheckers && !filter.runExperimentalCheckers) {
                 add(ErrorNodeDiagnosticCollectorComponent(session, reporter))
             }
             add(DeclarationCheckersDiagnosticComponent(session, reporter, declarationCheckers))
@@ -71,61 +72,76 @@ private object CheckersFactory {
 
 
     private fun createDeclarationCheckers(
-        useExtendedCheckers: Boolean,
+        filter: DiagnosticCheckerFilter,
         platform: TargetPlatform,
         extensionCheckers: List<FirAdditionalCheckersExtension>
-    ): DeclarationCheckers {
-        return if (useExtendedCheckers) {
-            ExtendedDeclarationCheckers
-        } else {
-            createDeclarationCheckers {
-                add(CommonDeclarationCheckers)
-                add(CommonIdeOnlyDeclarationCheckers)
-                when {
-                    platform.isJvm() -> add(JvmDeclarationCheckers)
-                    platform.isJs() -> add(JsDeclarationCheckers)
-                    platform.isNative() -> add(NativeDeclarationCheckers)
-                    else -> {}
-                }
-                addAll(extensionCheckers.map { it.declarationCheckers })
+    ) = createDeclarationCheckers {
+        if (filter.runDefaultCheckers) {
+            add(CommonDeclarationCheckers)
+            add(CommonIdeOnlyDeclarationCheckers)
+            when {
+                platform.isJvm() -> add(JvmDeclarationCheckers)
+                platform.isJs() -> add(JsDeclarationCheckers)
+                platform.isNative() -> add(NativeDeclarationCheckers)
+                else -> {}
             }
+            addAll(extensionCheckers.map { it.declarationCheckers })
+        }
+
+        if (filter.runExtraCheckers) {
+            add(ExtraDeclarationCheckers)
+        }
+
+        if (filter.runExperimentalCheckers) {
+            add(ExperimentalDeclarationCheckers)
         }
     }
 
     private fun createExpressionCheckers(
-        useExtendedCheckers: Boolean,
+        filter: DiagnosticCheckerFilter,
         platform: TargetPlatform,
         extensionCheckers: List<FirAdditionalCheckersExtension>
-    ): ExpressionCheckers {
-        return if (useExtendedCheckers) {
-            ExtendedExpressionCheckers
-        } else {
-            createExpressionCheckers {
-                add(CommonExpressionCheckers)
-                when {
-                    platform.isJvm() -> add(JvmExpressionCheckers)
-                    platform.isJs() -> add(JsExpressionCheckers)
-                    else -> {
-                    }
+    ) = createExpressionCheckers {
+        if (filter.runDefaultCheckers) {
+            add(CommonExpressionCheckers)
+            when {
+                platform.isJvm() -> add(JvmExpressionCheckers)
+                platform.isJs() -> add(JsExpressionCheckers)
+                else -> {
                 }
-                addAll(extensionCheckers.map { it.expressionCheckers })
             }
+            addAll(extensionCheckers.map { it.expressionCheckers })
+        }
+
+        if (filter.runExtraCheckers) {
+            add(ExtraExpressionCheckers)
+        }
+
+        if (filter.runExperimentalCheckers) {
+            add(ExperimentalExpressionCheckers)
         }
     }
 
     private fun createTypeCheckers(
-        useExtendedCheckers: Boolean,
+        filter: DiagnosticCheckerFilter,
         platform: TargetPlatform,
         extensionCheckers: List<FirAdditionalCheckersExtension>,
-    ): TypeCheckers {
-        if (useExtendedCheckers) return ExtendedTypeCheckers
-        return createTypeCheckers {
+    ) = createTypeCheckers {
+        if (filter.runDefaultCheckers) {
             add(CommonTypeCheckers)
             when {
                 platform.isJvm() -> add(JvmTypeCheckers)
                 else -> {}
             }
             addAll(extensionCheckers.map { it.typeCheckers })
+        }
+
+        if (filter.runExtraCheckers) {
+            add(ExtraTypeCheckers)
+        }
+
+        if (filter.runExperimentalCheckers) {
+            add(ExperimentalTypeCheckers)
         }
     }
 

@@ -171,9 +171,8 @@ class DurableFunctionKeyTransformer(
         UNDEFINED_OFFSET,
         keyMetaAnnotation!!.defaultType,
         keyMetaAnnotation.constructors.single(),
-        0,
-        0,
-        3
+        typeArgumentsCount = 0,
+        constructorTypeArgumentsCount = 0,
     ).apply {
         putValueArgument(0, irConst(key.key.hashCode()))
         putValueArgument(1, irConst(key.startOffset))
@@ -187,9 +186,8 @@ class DurableFunctionKeyTransformer(
         UNDEFINED_OFFSET,
         metaClassAnnotation!!.defaultType,
         metaClassAnnotation.constructors.single(),
-        0,
-        0,
-        1
+        typeArgumentsCount = 0,
+        constructorTypeArgumentsCount = 0,
     ).apply {
         putValueArgument(0, irConst(file))
     }

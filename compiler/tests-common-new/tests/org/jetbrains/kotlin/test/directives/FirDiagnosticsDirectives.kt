@@ -83,8 +83,12 @@ object FirDiagnosticsDirectives : SimpleDirectivesContainer() {
         applicability = Global
     )
 
-    val WITH_EXTENDED_CHECKERS by directive(
-        description = "Enable extended checkers"
+    val WITH_EXTRA_CHECKERS by directive(
+        description = "Enable extra checkers"
+    )
+
+    val WITH_EXPERIMENTAL_CHECKERS by directive(
+        description = "Enable experimental checkers"
     )
 
     val SCOPE_DUMP by stringDirective(

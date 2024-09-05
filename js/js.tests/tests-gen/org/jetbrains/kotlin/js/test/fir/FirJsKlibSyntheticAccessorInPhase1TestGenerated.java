@@ -318,6 +318,12 @@ public class FirJsKlibSyntheticAccessorInPhase1TestGenerated extends AbstractFir
       }
 
       @Test
+      @TestMetadata("leakingLateinitIsInitializedFromInternalInline.kt")
+      public void testLeakingLateinitIsInitializedFromInternalInline() {
+        runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossFilePrivateLeak/leakingLateinitIsInitializedFromInternalInline.kt");
+      }
+
+      @Test
       @TestMetadata("leakingPrivateClassConstructor.kt")
       public void testLeakingPrivateClassConstructor() {
         runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossFilePrivateLeak/leakingPrivateClassConstructor.kt");
@@ -616,6 +622,12 @@ public class FirJsKlibSyntheticAccessorInPhase1TestGenerated extends AbstractFir
       }
 
       @Test
+      @TestMetadata("leakingLateinitIsInitializedFromInternalInline.kt")
+      public void testLeakingLateinitIsInitializedFromInternalInline() {
+        runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak/leakingLateinitIsInitializedFromInternalInline.kt");
+      }
+
+      @Test
       @TestMetadata("leakingPrivateClassConstructor.kt")
       public void testLeakingPrivateClassConstructor() {
         runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak/leakingPrivateClassConstructor.kt");
@@ -902,6 +914,12 @@ public class FirJsKlibSyntheticAccessorInPhase1TestGenerated extends AbstractFir
       }
 
       @Test
+      @TestMetadata("useLateinitIsInitializedFromInternalInline.kt")
+      public void testUseLateinitIsInitializedFromInternalInline() {
+        runTest("compiler/testData/klib/syntheticAccessors/privateMember/singleFile/useLateinitIsInitializedFromInternalInline.kt");
+      }
+
+      @Test
       @TestMetadata("usePrivateClassConstructor.kt")
       public void testUsePrivateClassConstructor() {
         runTest("compiler/testData/klib/syntheticAccessors/privateMember/singleFile/usePrivateClassConstructor.kt");
@@ -1048,6 +1066,12 @@ public class FirJsKlibSyntheticAccessorInPhase1TestGenerated extends AbstractFir
       }
 
       @Test
+      @TestMetadata("leakingLateinitIsInitializedFromInternalInline.kt")
+      public void testLeakingLateinitIsInitializedFromInternalInline() {
+        runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossFilePrivateLeak/leakingLateinitIsInitializedFromInternalInline.kt");
+      }
+
+      @Test
       @TestMetadata("leakingPrivateClassFromLocalObjectInsideInternalInline.kt")
       public void testLeakingPrivateClassFromLocalObjectInsideInternalInline() {
         runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossFilePrivateLeak/leakingPrivateClassFromLocalObjectInsideInternalInline.kt");
@@ -1150,6 +1174,12 @@ public class FirJsKlibSyntheticAccessorInPhase1TestGenerated extends AbstractFir
       }
 
       @Test
+      @TestMetadata("leakingPrivateTopLevelLateinitVar.kt")
+      public void testLeakingPrivateTopLevelLateinitVar() {
+        runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossFilePrivateLeak/leakingPrivateTopLevelLateinitVar.kt");
+      }
+
+      @Test
       @TestMetadata("leakingPrivateTopLevelSetterThroughInlineFun.kt")
       public void testLeakingPrivateTopLevelSetterThroughInlineFun() {
         runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossFilePrivateLeak/leakingPrivateTopLevelSetterThroughInlineFun.kt");
@@ -1229,6 +1259,12 @@ public class FirJsKlibSyntheticAccessorInPhase1TestGenerated extends AbstractFir
       @Test
       public void testAllFilesPresentInCrossModulePrivateLeak() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossModulePrivateLeak"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+      }
+
+      @Test
+      @TestMetadata("leakingLateinitIsInitializedFromInternalInline.kt")
+      public void testLeakingLateinitIsInitializedFromInternalInline() {
+        runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossModulePrivateLeak/leakingLateinitIsInitializedFromInternalInline.kt");
       }
 
       @Test
@@ -1334,6 +1370,12 @@ public class FirJsKlibSyntheticAccessorInPhase1TestGenerated extends AbstractFir
       }
 
       @Test
+      @TestMetadata("leakingPrivateTopLevelLateinitVar.kt")
+      public void testLeakingPrivateTopLevelLateinitVar() {
+        runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossModulePrivateLeak/leakingPrivateTopLevelLateinitVar.kt");
+      }
+
+      @Test
       @TestMetadata("leakingPrivateTopLevelSetterThroughInlineFun.kt")
       public void testLeakingPrivateTopLevelSetterThroughInlineFun() {
         runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossModulePrivateLeak/leakingPrivateTopLevelSetterThroughInlineFun.kt");
@@ -1419,6 +1461,18 @@ public class FirJsKlibSyntheticAccessorInPhase1TestGenerated extends AbstractFir
       @Test
       public void testAllFilesPresentInSingleFile() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/klib/syntheticAccessors/topLevelPrivate/singleFile"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
+      }
+
+      @Test
+      @TestMetadata("leakingPrivateTopLevelLateinitVar.kt")
+      public void testLeakingPrivateTopLevelLateinitVar() {
+        runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/singleFile/leakingPrivateTopLevelLateinitVar.kt");
+      }
+
+      @Test
+      @TestMetadata("useLateinitIsInitializedFromInternalInline.kt")
+      public void testUseLateinitIsInitializedFromInternalInline() {
+        runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/singleFile/useLateinitIsInitializedFromInternalInline.kt");
       }
 
       @Test

@@ -24063,6 +24063,12 @@ public class LLFirReversedBlackBoxCodegenBasedTestGenerated extends AbstractLLFi
         }
 
         @Test
+        @TestMetadata("kt43710b.kt")
+        public void testKt43710b() {
+          runTest("compiler/testData/codegen/box/inference/pcla/issues/kt43710b.kt");
+        }
+
+        @Test
         @TestMetadata("kt44241.kt")
         public void testKt44241() {
           runTest("compiler/testData/codegen/box/inference/pcla/issues/kt44241.kt");
@@ -34503,6 +34509,12 @@ public class LLFirReversedBlackBoxCodegenBasedTestGenerated extends AbstractLLFi
       @TestMetadata("mapPut.kt")
       public void testMapPut() {
         runTest("compiler/testData/codegen/box/javaInterop/notNullAssertions/mapPut.kt");
+      }
+
+      @Test
+      @TestMetadata("noAssertionForNulllableCaptured.kt")
+      public void testNoAssertionForNulllableCaptured() {
+        runTest("compiler/testData/codegen/box/javaInterop/notNullAssertions/noAssertionForNulllableCaptured.kt");
       }
 
       @Test

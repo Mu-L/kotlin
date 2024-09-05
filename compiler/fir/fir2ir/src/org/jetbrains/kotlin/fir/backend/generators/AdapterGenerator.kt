@@ -283,8 +283,7 @@ internal class AdapterGenerator(
                     endOffset,
                     type,
                     adapteeSymbol,
-                    callableReferenceAccess.typeArguments.size,
-                    firAdaptee.valueParameters.size + firAdaptee.contextReceivers.size,
+                    typeArgumentsCount = callableReferenceAccess.typeArguments.size,
                     origin = null,
                     superQualifierSymbol = null
                 )
@@ -676,8 +675,7 @@ internal class AdapterGenerator(
             startOffset, endOffset,
             adapterFunction.returnType,
             invokeSymbol,
-            typeArgumentsCount = 0,
-            valueArgumentsCount = adapterFunction.valueParameters.size
+            typeArgumentsCount = 0
         )
         irCall.dispatchReceiver = adapterFunction.extensionReceiverParameter!!.toIrGetValue(startOffset, endOffset)
         for (irAdapterParameter in adapterFunction.valueParameters) {
@@ -775,7 +773,7 @@ internal class AdapterGenerator(
                         startOffset, endOffset, c.builtins.nothingType, irAdapterFunction.symbol,
                         IrTypeOperatorCallImpl(
                             startOffset, endOffset, irSamType, IrTypeOperator.SAM_CONVERSION, irSamType,
-                            IrCallImpl(
+                            IrCallImplWithShape(
                                 startOffset, endOffset, irFunctionType, builtins.checkNotNullSymbol,
                                 typeArgumentsCount = 1, valueArgumentsCount = 1, origin = IrStatementOrigin.EXCLEXCL
                             ).apply {

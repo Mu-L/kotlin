@@ -54,7 +54,10 @@ object CommonConfigurationKeys {
     val METADATA_KLIB = CompilerConfigurationKey.create<Boolean>("Produce metadata klib")
 
     @JvmField
-    val USE_FIR_EXTENDED_CHECKERS = CompilerConfigurationKey.create<Boolean>("fir extended checkers")
+    val USE_FIR_EXTRA_CHECKERS = CompilerConfigurationKey.create<Boolean>("fir extra checkers")
+
+    @JvmField
+    val USE_FIR_EXPERIMENTAL_CHECKERS = CompilerConfigurationKey.create<Boolean>("fir not-public-ready checkers")
 
     @JvmField
     val PARALLEL_BACKEND_THREADS =

@@ -197,10 +197,9 @@ class ClassStabilityTransformer(
             UNDEFINED_OFFSET,
             StabilityInferredClass.defaultType,
             StabilityInferredClass.constructors.first(),
-            0,
-            0,
-            1,
-            null
+            typeArgumentsCount = 0,
+            constructorTypeArgumentsCount = 0,
+            origin = null
         ).also {
             it.putValueArgument(0, irConst(parameterMask))
         }

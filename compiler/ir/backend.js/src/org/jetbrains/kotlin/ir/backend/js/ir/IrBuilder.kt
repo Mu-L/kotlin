@@ -36,7 +36,6 @@ object JsIrBuilder {
             target,
             superQualifierSymbol = superQualifierSymbol,
             typeArgumentsCount = owner.typeParameters.size,
-            valueArgumentsCount = owner.valueParameters.size,
             origin = origin
         ).apply {
             typeArguments?.let {
@@ -91,7 +90,6 @@ object JsIrBuilder {
             target,
             typeArgumentsCount = irClass.typeParameters.size,
             constructorTypeArgumentsCount = owner.typeParameters.size,
-            valueArgumentsCount = owner.valueParameters.size,
             origin = origin
         ).apply {
             typeArguments?.let {

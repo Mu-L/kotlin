@@ -351,7 +351,6 @@ abstract class AbstractComposeLowering(
             symbol.owner.returnType,
             symbol as IrSimpleFunctionSymbol,
             symbol.owner.typeParameters.size,
-            symbol.owner.valueParameters.size,
             origin
         ).also {
             if (dispatchReceiver != null) it.dispatchReceiver = dispatchReceiver
@@ -593,7 +592,6 @@ abstract class AbstractComposeLowering(
             iteratorType,
             getIteratorFunction.symbol,
             getIteratorFunction.symbol.owner.typeParameters.size,
-            getIteratorFunction.symbol.owner.valueParameters.size,
             IrStatementOrigin.FOR_LOOP_ITERATOR
         ).also {
             it.dispatchReceiver = subject
@@ -624,7 +622,6 @@ abstract class AbstractComposeLowering(
                             startOffset = UNDEFINED_OFFSET,
                             endOffset = UNDEFINED_OFFSET,
                             typeArgumentsCount = nextSymbol.symbol.owner.typeParameters.size,
-                            valueArgumentsCount = nextSymbol.symbol.owner.valueParameters.size,
                             type = elementType
                         ).also {
                             it.dispatchReceiver = irGet(iteratorVar)
@@ -936,8 +933,8 @@ abstract class AbstractComposeLowering(
         // but `registerFunctionAsMetadataVisible` is not working for field getter for some reason
         // and there is no api to register properties as metadata-visible
         val stabilityGetter = context.irFactory.buildFun {
-            startOffset = SYNTHETIC_OFFSET
-            endOffset = SYNTHETIC_OFFSET
+            startOffset = this@buildStabilityGetter.startOffset
+            endOffset = this@buildStabilityGetter.endOffset
             name = getterName
             returnType = stabilityField.type
             visibility = DescriptorVisibilities.PUBLIC
@@ -1262,8 +1259,7 @@ abstract class AbstractComposeLowering(
             endOffset,
             returnType,
             symbol as IrSimpleFunctionSymbol,
-            symbol.owner.typeParameters.size,
-            symbol.owner.valueParameters.size
+            symbol.owner.typeParameters.size
         ).apply {
             extensionReceiver = currentComposer
             putValueArgument(0, invalid)
@@ -1442,8 +1438,7 @@ abstract class AbstractComposeLowering(
             endOffset,
             type,
             symbol as IrSimpleFunctionSymbol,
-            symbol.owner.typeParameters.size,
-            symbol.owner.valueParameters.size
+            symbol.owner.typeParameters.size
         )
     }
 

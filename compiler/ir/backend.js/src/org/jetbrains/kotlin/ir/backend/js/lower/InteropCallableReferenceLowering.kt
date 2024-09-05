@@ -100,7 +100,6 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
                     UNDEFINED_OFFSET,
                     context.irBuiltIns.anyType,
                     context.intrinsics.jsBind,
-                    valueArgumentsCount = 2,
                     typeArgumentsCount = 0,
                     origin = JsStatementOrigins.BIND_CALL,
                 ).apply {
@@ -170,7 +169,7 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
         factory: IrSimpleFunctionSymbol
     ): IrCall {
         val newCall = expression.run {
-            IrCallImpl(startOffset, endOffset, type, factory, typeArgumentsCount, valueArgumentsCount, origin)
+            IrCallImpl(startOffset, endOffset, type, factory, typeArgumentsCount, origin)
         }
 
         newCall.dispatchReceiver = expression.dispatchReceiver
@@ -433,10 +432,9 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
             UNDEFINED_OFFSET,
             invokeFun.returnType,
             invokeFun.symbol,
-            0,
-            invokeFun.valueParameters.size,
-            JsStatementOrigins.EXPLICIT_INVOKE,
-            null
+            typeArgumentsCount = 0,
+            origin = JsStatementOrigins.EXPLICIT_INVOKE,
+            superQualifierSymbol = null
         )
 
         fun getValue(d: IrValueDeclaration): IrExpression = IrGetValueImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, d.symbol)
@@ -535,8 +533,7 @@ class InteropCallableReferenceLowering(val context: JsIrBackendContext) : BodyLo
                     lambdaType,
                     constructor.symbol,
                     lambdaInfo.lambdaClass.typeParameters.size,
-                    constructor.typeParameters.size,
-                    constructor.valueParameters.size
+                    constructor.typeParameters.size
                 )
 
                 for ((i, vp) in factoryFunction.valueParameters.withIndex()) {

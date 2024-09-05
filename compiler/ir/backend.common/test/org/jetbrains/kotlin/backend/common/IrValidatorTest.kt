@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.ir.declarations.impl.IrExternalPackageFragmentImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFactoryImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrFileImpl
 import org.jetbrains.kotlin.ir.declarations.impl.IrModuleFragmentImpl
+import org.jetbrains.kotlin.ir.expressions.IrConstKind
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
@@ -73,8 +74,12 @@ class IrValidatorTest {
             name = Name.identifier("foo")
             returnType = TestIrBuiltins.anyType
         }
+        function.addValueParameter(Name.identifier("p0"), TestIrBuiltins.anyType)
         val functionCall =
-            IrCallImpl(UNDEFINED_OFFSET, UNDEFINED_OFFSET, TestIrBuiltins.anyType, function.symbol, 0, 1).apply {
+            IrCallImpl(
+                UNDEFINED_OFFSET, UNDEFINED_OFFSET, TestIrBuiltins.anyType, function.symbol,
+                typeArgumentsCount = 0,
+            ).apply {
                 dispatchReceiver = stringConcatenationWithWrongType
                 putValueArgument(0, stringConcatenationWithWrongType)
             }
@@ -92,10 +97,14 @@ class IrValidatorTest {
             name = Name.identifier("foo")
             returnType = TestIrBuiltins.unitType
         }
+        function.addValueParameter(Name.identifier("p0"), TestIrBuiltins.anyType)
         val body = IrFactoryImpl.createBlockBody(5, 24)
         val stringConcatenationWithWrongType = IrStringConcatenationImpl(9, 20, TestIrBuiltins.anyType)
         val functionCall =
-            IrCallImpl(6, 23, TestIrBuiltins.anyType, function.symbol, 0, 1).apply {
+            IrCallImpl(
+                6, 23, TestIrBuiltins.anyType, function.symbol,
+                typeArgumentsCount = 0,
+           ).apply {
                 dispatchReceiver = stringConcatenationWithWrongType
                 putValueArgument(0, stringConcatenationWithWrongType)
             }
@@ -151,7 +160,7 @@ class IrValidatorTest {
                     """
                     [IR VALIDATION] IrValidatorTest: unexpected type: expected kotlin.String, got kotlin.Any
                     STRING_CONCATENATION type=kotlin.Any
-                      inside CALL 'public final fun foo (): kotlin.Any declared in <no parent>' type=kotlin.Any origin=null
+                      inside CALL 'public final fun foo (p0: kotlin.Any): kotlin.Any declared in <no parent>' type=kotlin.Any origin=null
                     """.trimIndent(),
                     null,
                 ),
@@ -160,7 +169,7 @@ class IrValidatorTest {
                     """
                     [IR VALIDATION] IrValidatorTest: Duplicate IR node: STRING_CONCATENATION type=kotlin.Any
                     STRING_CONCATENATION type=kotlin.Any
-                      inside CALL 'public final fun foo (): kotlin.Any declared in <no parent>' type=kotlin.Any origin=null
+                      inside CALL 'public final fun foo (p0: kotlin.Any): kotlin.Any declared in <no parent>' type=kotlin.Any origin=null
                     """.trimIndent(),
                     null,
                 ),
@@ -178,9 +187,9 @@ class IrValidatorTest {
                     WARNING,
                     """
                     [IR VALIDATION] IrValidatorTest: unexpected type: expected kotlin.Unit, got kotlin.Any
-                    CALL 'public final fun foo (): kotlin.Unit declared in org.sample' type=kotlin.Any origin=null
+                    CALL 'public final fun foo (p0: kotlin.Any): kotlin.Unit declared in org.sample' type=kotlin.Any origin=null
                       inside BLOCK_BODY
-                        inside FUN name:foo visibility:public modality:FINAL <> () returnType:kotlin.Unit
+                        inside FUN name:foo visibility:public modality:FINAL <> (p0:kotlin.Any) returnType:kotlin.Unit
                           inside FILE fqName:org.sample fileName:test.kt
                     """.trimIndent(),
                     CompilerMessageLocation.create("test.kt", 1, 7, null),
@@ -190,9 +199,9 @@ class IrValidatorTest {
                     """
                     [IR VALIDATION] IrValidatorTest: unexpected type: expected kotlin.String, got kotlin.Any
                     STRING_CONCATENATION type=kotlin.Any
-                      inside CALL 'public final fun foo (): kotlin.Unit declared in org.sample' type=kotlin.Any origin=null
+                      inside CALL 'public final fun foo (p0: kotlin.Any): kotlin.Unit declared in org.sample' type=kotlin.Any origin=null
                         inside BLOCK_BODY
-                          inside FUN name:foo visibility:public modality:FINAL <> () returnType:kotlin.Unit
+                          inside FUN name:foo visibility:public modality:FINAL <> (p0:kotlin.Any) returnType:kotlin.Unit
                             inside FILE fqName:org.sample fileName:test.kt
                     """.trimIndent(),
                     CompilerMessageLocation.create("test.kt", 1, 10, null),
@@ -202,9 +211,9 @@ class IrValidatorTest {
                     """
                     [IR VALIDATION] IrValidatorTest: Duplicate IR node: STRING_CONCATENATION type=kotlin.Any
                     STRING_CONCATENATION type=kotlin.Any
-                      inside CALL 'public final fun foo (): kotlin.Unit declared in org.sample' type=kotlin.Any origin=null
+                      inside CALL 'public final fun foo (p0: kotlin.Any): kotlin.Unit declared in org.sample' type=kotlin.Any origin=null
                         inside BLOCK_BODY
-                          inside FUN name:foo visibility:public modality:FINAL <> () returnType:kotlin.Unit
+                          inside FUN name:foo visibility:public modality:FINAL <> (p0:kotlin.Any) returnType:kotlin.Unit
                             inside FILE fqName:org.sample fileName:test.kt
                     """.trimIndent(),
                     CompilerMessageLocation.create("test.kt", 1, 10, null),
@@ -224,7 +233,7 @@ class IrValidatorTest {
                     """
                     [IR VALIDATION] IrValidatorTest: unexpected type: expected kotlin.String, got kotlin.Any
                     STRING_CONCATENATION type=kotlin.Any
-                      inside CALL 'public final fun foo (): kotlin.Any declared in <no parent>' type=kotlin.Any origin=null
+                      inside CALL 'public final fun foo (p0: kotlin.Any): kotlin.Any declared in <no parent>' type=kotlin.Any origin=null
                     """.trimIndent(),
                     null,
                 ),
@@ -233,7 +242,7 @@ class IrValidatorTest {
                     """
                     [IR VALIDATION] IrValidatorTest: Duplicate IR node: STRING_CONCATENATION type=kotlin.Any
                     STRING_CONCATENATION type=kotlin.Any
-                      inside CALL 'public final fun foo (): kotlin.Any declared in <no parent>' type=kotlin.Any origin=null
+                      inside CALL 'public final fun foo (p0: kotlin.Any): kotlin.Any declared in <no parent>' type=kotlin.Any origin=null
                     """.trimIndent(),
                     null,
                 ),
@@ -251,9 +260,9 @@ class IrValidatorTest {
                     ERROR,
                     """
                     [IR VALIDATION] IrValidatorTest: unexpected type: expected kotlin.Unit, got kotlin.Any
-                    CALL 'public final fun foo (): kotlin.Unit declared in org.sample' type=kotlin.Any origin=null
+                    CALL 'public final fun foo (p0: kotlin.Any): kotlin.Unit declared in org.sample' type=kotlin.Any origin=null
                       inside BLOCK_BODY
-                        inside FUN name:foo visibility:public modality:FINAL <> () returnType:kotlin.Unit
+                        inside FUN name:foo visibility:public modality:FINAL <> (p0:kotlin.Any) returnType:kotlin.Unit
                           inside FILE fqName:org.sample fileName:test.kt
                     """.trimIndent(),
                     CompilerMessageLocation.create("test.kt", 1, 7, null),
@@ -263,9 +272,9 @@ class IrValidatorTest {
                     """
                     [IR VALIDATION] IrValidatorTest: unexpected type: expected kotlin.String, got kotlin.Any
                     STRING_CONCATENATION type=kotlin.Any
-                      inside CALL 'public final fun foo (): kotlin.Unit declared in org.sample' type=kotlin.Any origin=null
+                      inside CALL 'public final fun foo (p0: kotlin.Any): kotlin.Unit declared in org.sample' type=kotlin.Any origin=null
                         inside BLOCK_BODY
-                          inside FUN name:foo visibility:public modality:FINAL <> () returnType:kotlin.Unit
+                          inside FUN name:foo visibility:public modality:FINAL <> (p0:kotlin.Any) returnType:kotlin.Unit
                             inside FILE fqName:org.sample fileName:test.kt
                     """.trimIndent(),
                     CompilerMessageLocation.create("test.kt", 1, 10, null),
@@ -275,9 +284,9 @@ class IrValidatorTest {
                     """
                     [IR VALIDATION] IrValidatorTest: Duplicate IR node: STRING_CONCATENATION type=kotlin.Any
                     STRING_CONCATENATION type=kotlin.Any
-                      inside CALL 'public final fun foo (): kotlin.Unit declared in org.sample' type=kotlin.Any origin=null
+                      inside CALL 'public final fun foo (p0: kotlin.Any): kotlin.Unit declared in org.sample' type=kotlin.Any origin=null
                         inside BLOCK_BODY
-                          inside FUN name:foo visibility:public modality:FINAL <> () returnType:kotlin.Unit
+                          inside FUN name:foo visibility:public modality:FINAL <> (p0:kotlin.Any) returnType:kotlin.Unit
                             inside FILE fqName:org.sample fileName:test.kt
                     """.trimIndent(),
                     CompilerMessageLocation.create("test.kt", 1, 10, null),
@@ -405,7 +414,6 @@ class IrValidatorTest {
                 symbol = annotationConstructor.symbol,
                 typeArgumentsCount = 0,
                 constructorTypeArgumentsCount = 0,
-                valueArgumentsCount = 0,
             )
         )
         file2.addChild(annotatedClass)

@@ -548,7 +548,7 @@ class CallAndReferenceGenerator(
                     val constructor = firSymbol.unwrapCallRepresentative(c).fir as FirConstructor
                     val totalTypeParametersCount = constructor.typeParameters.size
                     val constructorTypeParametersCount = constructor.typeParameters.count { it is FirTypeParameter }
-                    IrConstructorCallImpl(
+                    IrConstructorCallImplWithShape(
                         startOffset,
                         endOffset,
                         irType,
@@ -573,7 +573,7 @@ class CallAndReferenceGenerator(
                     ) {
                         explicitReceiverExpression.updateStatementOrigin(callOrigin)
                     }
-                    IrCallImpl(
+                    IrCallImplWithShape(
                         startOffset, endOffset, irType, irSymbol,
                         typeArgumentsCount = firSymbol.typeParameterSymbols.size,
                         valueArgumentsCount = firSymbol.valueParametersSize(),
@@ -587,7 +587,6 @@ class CallAndReferenceGenerator(
                         startOffset, endOffset, irType,
                         declarationStorage.findGetterOfProperty(irSymbol),
                         typeArgumentsCount = calleeReference.toResolvedCallableSymbol()!!.fir.typeParameters.size,
-                        valueArgumentsCount = 0,
                         origin = IrStatementOrigin.GET_LOCAL_PROPERTY,
                         superQualifierSymbol = dispatchReceiver?.superQualifierSymbolForFunctionAndPropertyAccess()
                     )
@@ -599,7 +598,7 @@ class CallAndReferenceGenerator(
                     val backingFieldSymbol = declarationStorage.findBackingFieldOfProperty(irSymbol)
                     when {
                         getterSymbol != null -> {
-                            IrCallImpl(
+                            IrCallImplWithShape(
                                 startOffset, endOffset, irType,
                                 getterSymbol,
                                 typeArgumentsCount = property.typeParameters.size,
@@ -767,7 +766,6 @@ class CallAndReferenceGenerator(
                         setterSymbol != null -> IrCallImpl(
                             startOffset, endOffset, type, setterSymbol,
                             typeArgumentsCount = firProperty.typeParameters.size,
-                            valueArgumentsCount = 1 + firProperty.contextReceivers.size,
                             origin = origin,
                             superQualifierSymbol = variableAssignment.dispatchReceiver?.superQualifierSymbolForFunctionAndPropertyAccess()
                         ).apply {
@@ -785,7 +783,7 @@ class CallAndReferenceGenerator(
                     val firProperty = calleeReference.toResolvedPropertySymbol()!!.fir
 
                     when {
-                        setterSymbol != null -> IrCallImpl(
+                        setterSymbol != null -> IrCallImplWithShape(
                             startOffset, endOffset, type, setterSymbol,
                             typeArgumentsCount = firProperty.typeParameters.size,
                             valueArgumentsCount = 1 + firProperty.contextReceivers.size,
@@ -812,7 +810,6 @@ class CallAndReferenceGenerator(
                     IrCallImpl(
                         startOffset, endOffset, type, symbol,
                         typeArgumentsCount = firFunction?.typeParameters?.size ?: 0,
-                        valueArgumentsCount = 1,
                         origin = origin
                     ).apply {
                         putValueArgument(0, irRhsWithCast)
@@ -873,7 +870,7 @@ class CallAndReferenceGenerator(
                 @OptIn(UnsafeDuringIrConstructionAPI::class) // Error class constructor is already created, see IrErrorClassImpl.
                 IrConstructorCallImpl(
                     startOffset, endOffset, type, type.symbol.owner.primaryConstructor!!.symbol,
-                    valueArgumentsCount = 0, typeArgumentsCount = 0, constructorTypeArgumentsCount = 0,
+                    typeArgumentsCount = 0, constructorTypeArgumentsCount = 0,
                     source = FirAnnotationSourceElement(annotation),
                 )
             }
@@ -914,7 +911,7 @@ class CallAndReferenceGenerator(
             }
             val irConstructor = declarationStorage.getIrConstructorSymbol(fullyExpandedConstructorSymbol)
 
-            IrConstructorCallImpl(
+            IrConstructorCallImplWithShape(
                 startOffset, endOffset, type, irConstructor,
                 // Get the number of value arguments from FIR because of a possible cycle where an annotation constructor
                 // parameter is annotated with the same annotation.
@@ -1243,8 +1240,7 @@ class CallAndReferenceGenerator(
                     startOffset, endOffset,
                     firConversionFunction.fir.returnTypeRef.toIrType(),
                     irConversionFunction,
-                    typeArgumentsCount = 0,
-                    valueArgumentsCount = 0
+                    typeArgumentsCount = 0
                 ).apply {
                     extensionReceiver = this@applyToElement
                 }

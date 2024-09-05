@@ -91,7 +91,7 @@ private class ExpressionValuesExtractor(val context: Context,
     val unit = IrCallImpl(
             UNDEFINED_OFFSET, UNDEFINED_OFFSET,
             context.irBuiltIns.unitType, context.ir.symbols.theUnitInstance,
-            typeArgumentsCount = 0, valueArgumentsCount = 0)
+            typeArgumentsCount = 0)
 
     fun forEachValue(expression: IrExpression, block: (IrExpression) -> Unit) {
         when (expression) {
@@ -234,8 +234,6 @@ internal class FunctionDFGBuilder(private val generationState: NativeGenerationS
                     val producerInvocation = IrCallImpl.fromSymbolOwner(expression.startOffset, expression.endOffset,
                             executeImplProducerInvoke.returnType,
                             executeImplProducerInvoke.symbol,
-                            executeImplProducerInvoke.symbol.owner.typeParameters.size,
-                            executeImplProducerInvoke.symbol.owner.valueParameters.size,
                             STATEMENT_ORIGIN_PRODUCER_INVOCATION)
                     producerInvocation.dispatchReceiver = expression.getValueArgument(2)
 
@@ -246,8 +244,6 @@ internal class FunctionDFGBuilder(private val generationState: NativeGenerationS
                     val jobInvocation = IrCallImpl.fromSymbolOwner(expression.startOffset, expression.endOffset,
                             jobFunctionReference.symbol.owner.returnType,
                             jobFunctionReference.symbol as IrSimpleFunctionSymbol,
-                            jobFunctionReference.symbol.owner.typeParameters.size,
-                            jobFunctionReference.symbol.owner.valueParameters.size,
                             STATEMENT_ORIGIN_JOB_INVOCATION)
                     jobInvocation.putValueArgument(0, producerInvocation)
 
@@ -281,8 +277,6 @@ internal class FunctionDFGBuilder(private val generationState: NativeGenerationS
                 val objcObjGetter = IrCallImpl.fromSymbolOwner(expression.startOffset, expression.endOffset,
                         objCObjectRawValueGetter.owner.returnType,
                         objCObjectRawValueGetter,
-                        objCObjectRawValueGetter.owner.typeParameters.size,
-                        objCObjectRawValueGetter.owner.valueParameters.size
                 ).apply {
                     extensionReceiver = expression.argument
                 }
@@ -359,8 +353,7 @@ internal class FunctionDFGBuilder(private val generationState: NativeGenerationS
                         expression.startOffset, expression.endOffset,
                         context.irBuiltIns.unitType,
                         arraySetSymbol,
-                        typeArgumentsCount = if (isGeneric) 1 else 0,
-                        valueArgumentsCount = 2
+                        typeArgumentsCount = if (isGeneric) 1 else 0
                 ).apply {
                     dispatchReceiver = expression
                     if (isGeneric) putTypeArgument(0, value.type)

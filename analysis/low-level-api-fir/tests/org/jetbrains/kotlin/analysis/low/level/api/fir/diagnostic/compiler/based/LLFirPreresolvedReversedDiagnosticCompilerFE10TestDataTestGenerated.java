@@ -1522,6 +1522,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
     }
 
     @Test
+    @TestMetadata("redundantExplicitTypeWithIntegerLiterals.kt")
+    public void testRedundantExplicitTypeWithIntegerLiterals() {
+      runTest("compiler/testData/diagnostics/tests/redundantExplicitTypeWithIntegerLiterals.kt");
+    }
+
+    @Test
     @TestMetadata("referenceToParameterizedFun.kt")
     public void testReferenceToParameterizedFun() {
       runTest("compiler/testData/diagnostics/tests/referenceToParameterizedFun.kt");
@@ -19340,6 +19346,18 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
         }
 
         @Test
+        @TestMetadata("semifixOuterVariable.kt")
+        public void testSemifixOuterVariable() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/semifixOuterVariable.kt");
+        }
+
+        @Test
+        @TestMetadata("semifixOuterVariableFeatureDisabled.kt")
+        public void testSemifixOuterVariableFeatureDisabled() {
+          runTest("compiler/testData/diagnostics/tests/inference/pcla/semifixOuterVariableFeatureDisabled.kt");
+        }
+
+        @Test
         @TestMetadata("simpleLambdaInCallWithAnotherLambdaWithBuilderInference.kt")
         public void testSimpleLambdaInCallWithAnotherLambdaWithBuilderInference() {
           runTest("compiler/testData/diagnostics/tests/inference/pcla/simpleLambdaInCallWithAnotherLambdaWithBuilderInference.kt");
@@ -19538,6 +19556,12 @@ public class LLFirPreresolvedReversedDiagnosticCompilerFE10TestDataTestGenerated
           @TestMetadata("kt43710.kt")
           public void testKt43710() {
             runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt43710.kt");
+          }
+
+          @Test
+          @TestMetadata("kt43710b.kt")
+          public void testKt43710b() {
+            runTest("compiler/testData/diagnostics/tests/inference/pcla/issues/kt43710b.kt");
           }
 
           @Test

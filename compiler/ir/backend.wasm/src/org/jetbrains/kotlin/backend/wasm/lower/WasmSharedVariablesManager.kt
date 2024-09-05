@@ -41,8 +41,7 @@ class WasmSharedVariablesManager(val context: WasmBackendContext) : SharedVariab
                 type = boxClass.defaultType,
                 symbol = constructorSymbol,
                 typeArgumentsCount = boxClass.owner.typeParameters.size,
-                constructorTypeArgumentsCount = constructorSymbol.owner.typeParameters.size,
-                valueArgumentsCount = constructorSymbol.owner.valueParameters.size
+                constructorTypeArgumentsCount = constructorSymbol.owner.typeParameters.size
             ).apply {
                 putValueArgument(0, initializer)
             }
@@ -78,7 +77,6 @@ class WasmSharedVariablesManager(val context: WasmBackendContext) : SharedVariab
             type = propertyGetter.returnType,
             symbol = propertyGetter.symbol,
             typeArgumentsCount = 0,
-            valueArgumentsCount = 0,
             origin = originalGet.origin
         ).also {
             it.dispatchReceiver = IrGetValueImpl(
@@ -113,7 +111,6 @@ class WasmSharedVariablesManager(val context: WasmBackendContext) : SharedVariab
             type = propertySetter.returnType,
             symbol = propertySetter.symbol,
             typeArgumentsCount = 0,
-            valueArgumentsCount = 1,
             origin = originalSet.origin
         ).also {
             it.dispatchReceiver = IrGetValueImpl(

@@ -173,7 +173,7 @@ abstract class SyntheticAccessorGenerator<Context : BackendContext, ScopeInfo>(
             accessor.startOffset,
             accessor.endOffset,
             accessor.returnType,
-            targetSymbol, targetSymbol.owner.typeParameters.size,
+            targetSymbol,
             superQualifierSymbol = superQualifierSymbol
         ).also {
             copyAllParamsToArgs(it, accessor)
@@ -190,7 +190,7 @@ abstract class SyntheticAccessorGenerator<Context : BackendContext, ScopeInfo>(
 
     private fun makeGetterAccessor(
         field: IrField,
-        parent: IrClass,
+        parent: IrDeclarationParent,
         superQualifierSymbol: IrClassSymbol?
     ): IrSimpleFunction =
         context.irFactory.buildFun {
@@ -207,7 +207,7 @@ abstract class SyntheticAccessorGenerator<Context : BackendContext, ScopeInfo>(
             if (!field.isStatic) {
                 // Accessors are always to one's own fields.
                 accessor.addValueParameter(
-                    RECEIVER_VALUE_PARAMETER_NAME, parent.defaultType, IrDeclarationOrigin.SYNTHETIC_ACCESSOR
+                    RECEIVER_VALUE_PARAMETER_NAME, (parent as IrClass).defaultType, IrDeclarationOrigin.SYNTHETIC_ACCESSOR
                 )
             }
 
@@ -245,7 +245,7 @@ abstract class SyntheticAccessorGenerator<Context : BackendContext, ScopeInfo>(
 
     private fun makeSetterAccessor(
         field: IrField,
-        parent: IrClass,
+        parent: IrDeclarationParent,
         superQualifierSymbol: IrClassSymbol?
     ): IrSimpleFunction =
         context.irFactory.buildFun {
@@ -262,7 +262,7 @@ abstract class SyntheticAccessorGenerator<Context : BackendContext, ScopeInfo>(
             if (!field.isStatic) {
                 // Accessors are always to one's own fields.
                 accessor.addValueParameter(
-                    RECEIVER_VALUE_PARAMETER_NAME, parent.defaultType, IrDeclarationOrigin.SYNTHETIC_ACCESSOR
+                    RECEIVER_VALUE_PARAMETER_NAME, (parent as IrClass).defaultType, IrDeclarationOrigin.SYNTHETIC_ACCESSOR
                 )
             }
 
@@ -296,10 +296,10 @@ abstract class SyntheticAccessorGenerator<Context : BackendContext, ScopeInfo>(
         )
     }
 
-    private fun extractFieldAndParent(expression: IrFieldAccessExpression, scopeInfo: ScopeInfo): Pair<IrField, IrClass> {
+    private fun extractFieldAndParent(expression: IrFieldAccessExpression, scopeInfo: ScopeInfo): Pair<IrField, IrDeclarationParent> {
         val dispatchReceiverClassSymbol = expression.receiver?.type?.classifierOrNull as? IrClassSymbol
         val field = expression.symbol.owner
-        val parent = field.accessorParent(dispatchReceiverClassSymbol?.owner ?: field.parent, scopeInfo) as IrClass
+        val parent = field.accessorParent(dispatchReceiverClassSymbol?.owner ?: field.parent, scopeInfo)
 
         return field to parent
     }
@@ -436,7 +436,7 @@ abstract class SyntheticAccessorGenerator<Context : BackendContext, ScopeInfo>(
         return IrCallImpl.fromSymbolOwner(
             oldExpression.startOffset, oldExpression.endOffset,
             oldExpression.type,
-            this as IrSimpleFunctionSymbol, oldExpression.typeArgumentsCount,
+            this as IrSimpleFunctionSymbol,
             origin = oldExpression.origin
         )
     }
@@ -447,7 +447,7 @@ abstract class SyntheticAccessorGenerator<Context : BackendContext, ScopeInfo>(
         return IrDelegatingConstructorCallImpl.fromSymbolOwner(
             oldExpression.startOffset, oldExpression.endOffset,
             context.irBuiltIns.unitType,
-            this as IrConstructorSymbol, oldExpression.typeArgumentsCount
+            this as IrConstructorSymbol
         )
     }
 
@@ -496,7 +496,7 @@ abstract class SyntheticAccessorGenerator<Context : BackendContext, ScopeInfo>(
         val call = IrCallImpl(
             oldExpression.startOffset, oldExpression.endOffset,
             oldExpression.type,
-            accessorSymbol, 0, accessorSymbol.owner.valueParameters.size,
+            accessorSymbol, 0,
             oldExpression.origin
         )
         oldExpression.receiver?.let {
@@ -541,7 +541,7 @@ abstract class SyntheticAccessorGenerator<Context : BackendContext, ScopeInfo>(
         val call = IrCallImpl(
             oldExpression.startOffset, oldExpression.endOffset,
             oldExpression.type,
-            accessorSymbol, 0, accessorSymbol.owner.valueParameters.size,
+            accessorSymbol, 0,
             oldExpression.origin
         )
         oldExpression.receiver?.let {

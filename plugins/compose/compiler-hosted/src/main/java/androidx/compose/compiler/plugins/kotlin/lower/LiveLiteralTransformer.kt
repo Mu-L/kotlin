@@ -213,9 +213,8 @@ open class LiveLiteralTransformer(
         UNDEFINED_OFFSET,
         liveLiteralInfoAnnotation.defaultType,
         liveLiteralInfoAnnotation.constructors.single(),
-        0,
-        0,
-        2
+        typeArgumentsCount = 0,
+        constructorTypeArgumentsCount = 0
     ).apply {
         putValueArgument(0, irConst(key))
         putValueArgument(1, irConst(offset))
@@ -228,9 +227,8 @@ open class LiveLiteralTransformer(
         UNDEFINED_OFFSET,
         liveLiteralFileInfoAnnotation.defaultType,
         liveLiteralFileInfoAnnotation.constructors.single(),
-        0,
-        0,
-        1
+        typeArgumentsCount = 0,
+        constructorTypeArgumentsCount = 0
     ).apply {
         putValueArgument(0, irConst(file))
     }
@@ -381,7 +379,6 @@ open class LiveLiteralTransformer(
                     literalType,
                     stateGetValue,
                     stateGetValue.owner.typeParameters.size,
-                    stateGetValue.owner.valueParameters.size,
                     IrStatementOrigin.FOR_LOOP_ITERATOR
                 ).apply {
                     dispatchReceiver = b
@@ -447,8 +444,7 @@ open class LiveLiteralTransformer(
             expression.endOffset,
             expression.type,
             getter.symbol,
-            getter.symbol.owner.typeParameters.size,
-            getter.symbol.owner.valueParameters.size
+            getter.symbol.owner.typeParameters.size
         ).apply {
             dispatchReceiver = irGetLiveLiteralsClass(expression.startOffset, expression.endOffset)
         }
